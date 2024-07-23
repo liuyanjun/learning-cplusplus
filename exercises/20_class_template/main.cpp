@@ -1,17 +1,22 @@
 ﻿#include "../exercise.h"
-
+#include <cstring>
 // READ: 类模板 <https://zh.cppreference.com/w/cpp/language/class_template>
 
 template<class T>
 struct Tensor4D {
     unsigned int shape[4];
     T *data;
+    unsigned int size;
 
     Tensor4D(unsigned int const shape_[4], T const *data_) {
-        unsigned int size = 1;
+        size = shape_[0] * shape_[1] * shape_[2] * shape_[3];
         // TODO: 填入正确的 shape 并计算 size
         data = new T[size];
         std::memcpy(data, data_, size * sizeof(T));
+        std::memcpy(shape, shape_, 4*sizeof(*shape_));
+        for(int i = 0; i<4; i++){
+            printf("shape[%d]=%d\n", i, shape[i]);
+        }
     }
     ~Tensor4D() {
         delete[] data;
@@ -28,6 +33,38 @@ struct Tensor4D {
     // 则 `this` 与 `others` 相加时，3 个形状为 `[1, 2, 1, 4]` 的子张量各自与 `others` 对应项相加。
     Tensor4D &operator+=(Tensor4D const &others) {
         // TODO: 实现单向广播的加法
+        if(shape[3] == others.shape[3]){
+            int line = shape[0] * shape[1] * shape[2];
+            for(int row = 0; row < line; row++){
+                for(int seq = 0; seq < shape[3]; seq++){
+                    data[row * shape[3]+seq] += others.data[row * shape[3]+seq];
+                }
+                
+            }
+        }
+        if(shape[0] == others.shape[0] && shape[1] == others.shape[1]
+                && shape[2] == others.shape[2] && shape[3] != others.shape[3]){
+            int line = shape[0] * shape[1] * shape[2];
+            for(int row = 0; row < line; row++){
+                for(int seq = 0; seq < shape[3]; seq++){
+                    data[row * shape[3]+seq] += others.data[row];
+                }
+                
+            }
+        }
+        if(1 == others.shape[0] && 1 == others.shape[1]
+                && 1 == others.shape[2] && 1 == others.shape[3]){
+            int line = shape[0] * shape[1] * shape[2];
+            for(int row = 0; row < line; row++){
+                for(int seq = 0; seq < shape[3]; seq++){
+                    data[row * shape[3]+seq] += others.data[0];
+                }
+                
+            }
+        }
+        for(int i = 0; i< size; i++){
+            printf("data[%d]=%d\n", i, data[i]);
+        }
         return *this;
     }
 };
