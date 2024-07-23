@@ -59,7 +59,8 @@
    ```
 
    总结所有练习通过情况。
-
+5. dd the following line to xmake.lua
+   add_links("pthread")
 ## 其他学习资源
 
 - [Microsoft：欢迎回到 C++](https://learn.microsoft.com/zh-cn/cpp/cpp/welcome-back-to-cpp-modern-cpp?view=msvc-170)
